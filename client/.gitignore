@@ -1,0 +1,64 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node.js
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+*.env
+
+# AI/ML
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.joblib
+*.pickle
+*.pkl
+*.npz
+*.npy
+model_output/
+saved_models/
+
+# OS/Editor Specific
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Windows-specific files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Git LFS or binary traces
+*.dll
+*.lib
+*.exe
+*.zip
