@@ -1,25 +1,42 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+
 const app = express();
 dotenv.config();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routers
 const returnRouter = require('./routes/return');
 const partnerRouter = require('./routes/partner');
+const userrouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const marketplaceRouter = require('./routes/marketplace');
 
-app.get('/api/return', (req, res) => res.json({ message: 'Return API' }));
-app.get('/api/partner', (req, res) => res.json({ message: 'Partner API' }));
-app.get('/api/admin', (req, res) => res.json({ message: 'Admin API' }));
-app.get('/api/marketplace', (req, res) => res.json({ message: 'Marketplace API' }));
 
-app.use('/api/return', returnRouter);
-app.use('/api/partner', partnerRouter);
-app.use('/api/admin', adminRouter);
-app.use('/api/marketplace', marketplaceRouter);
+// DB and server startup
+const port = process.env.PORT || 5000;
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("Database connection success");
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  })
+  .catch(err => {
+    console.error("Error in DB connection:", err);
+  });
+
+// Routes
+app.use('/return-api', returnRouter);
+app.use('/partner-api', partnerRouter);
+app.use('/admin-api', adminRouter);
+app.use('/marketplace-api', marketplaceRouter);
+app.use('/user-api', userrouter);
+app.use((err,req,res,next)=>{
+    console.log('error object in express errror handler: ',err);
+    res.send({message:err.message})
+})
