@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Reverse Logistics Platform (MERN + AI/ML)
 
 A full-stack platform for managing returned products with AI-powered decision making and circular marketplace.
@@ -52,3 +53,6 @@ A full-stack platform for managing returned products with AI-powered decision ma
 ## .env.example
 
 See `server/.env.example` for required environment variables.
+=======
+# reLoopAI
+>>>>>>> 2cc0bcf03b57a30e553c936c21a344c2f9767745
