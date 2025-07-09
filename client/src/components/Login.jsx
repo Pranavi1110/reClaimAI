@@ -53,7 +53,7 @@ function Login({ setIsLoggedIn }) {
       } else if (role === 'partner') {
         navigate('/partner');
       } else {
-        navigate('/return');
+        navigate('/customer');
       }
     } catch (err) {
       console.error('Error during login/register:', err);

@@ -28,39 +28,50 @@ const ReturnForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result;
-      const base64Image = base64String.split(',')[1];
-      const mimeType = base64String.split(';')[0].split(':')[1];
+  const storedUser = localStorage.getItem("user");
+  const userEmail = storedUser ? JSON.parse(storedUser).email : null;
 
-      try {
-        const res = await axios.post("http://localhost:5000/return-api/submit", {
-          productName: formData.productName,
-          reason: formData.reason,
-          description: formData.description,
-          purchaseDate: formData.purchaseDate,
-          imageBase64: base64Image,
-          mimeType: mimeType,
-        });
+  if (!userEmail) {
+    alert("User not found. Please log in again.");
+    setLoading(false);
+    return;
+  }
 
-        setAiPrediction(res.data.prediction);
-        setSubmitted(true);
-      } catch (err) {
-        alert(err.response?.data?.message || "Error submitting return");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const base64String = reader.result;
+    const base64Image = base64String.split(',')[1];
+    const mimeType = base64String.split(';')[0].split(':')[1];
 
-    if (formData.image) {
-      reader.readAsDataURL(formData.image);
+    try {
+      const res = await axios.post("http://localhost:5000/return-api/submit", {
+        productName: formData.productName,
+        reason: formData.reason,
+        description: formData.description,
+        purchaseDate: formData.purchaseDate,
+        imageBase64: base64Image,
+        mimeType: mimeType,
+        email: userEmail, // ✅ send user email
+      });
+
+      console.log("🧠 AI Response", res.data);
+      setAiPrediction(res.data.prediction);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("❌ Error submitting:", err);
+      alert(err.response?.data?.message || "Error submitting return");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (formData.image) {
+    reader.readAsDataURL(formData.image);
+  }
+};
 
   return (
     <div className="return-form-container">
@@ -132,10 +143,15 @@ const ReturnForm = () => {
 
       {aiPrediction && (
         <div className="ai-prediction">
-          <h3>AI Analysis Result</h3>
+          <h3>AI Sustainability & Condition Report</h3>
           <div className="prediction-card">
             <div><strong>Condition:</strong> {aiPrediction.condition}</div>
-            <div><strong>Message:</strong> {aiPrediction.followup}</div>
+            <div style={{ marginTop: '10px' }}>
+              <strong>AI Insight:</strong>
+              <p style={{ whiteSpace: 'pre-wrap', marginTop: '5px' }}>
+                {aiPrediction.summary || "No insight provided by AI."}
+              </p>
+            </div>
           </div>
         </div>
       )}

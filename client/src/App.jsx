@@ -7,6 +7,8 @@ import Marketplace from "./components/Marketplace";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import "./App.css";
+import CustomerDashboard from "./components/CustomerDashboard";
+import PastCustomerReturns from "./components/PastCustomerReturns";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,6 +71,8 @@ function App() {
         />
         <Route path="/return" element={<ReturnForm />} />
         <Route path="/partner" element={<PartnerDashboard />} />
+         <Route path="/customer" element={<CustomerDashboard/>} />
+          <Route path="/past" element={<PastCustomerReturns/>} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/marketplace" element={<Marketplace />} />
       </Routes>
