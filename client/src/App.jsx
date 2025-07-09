@@ -4,6 +4,7 @@ import PartnerDashboard from "./components/PartnerDashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import Marketplace from "./components/Marketplace";
 import Home from "./components/Home";
+import RepairDashboard from "./components/RepairDashboard";
 import "./App.css";
 
 function App() {
@@ -69,6 +70,16 @@ function App() {
         >
           Marketplace
         </Link>
+        <Link
+          to="/repair"
+          style={{
+            textDecoration: "none",
+            color: "#2c3e50",
+            fontWeight: "600",
+          }}
+        >
+          Repair
+        </Link>
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -76,6 +87,7 @@ function App() {
         <Route path="/partner" element={<PartnerDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/repair" element={<RepairDashboard />} />
       </Routes>
     </Router>
   );

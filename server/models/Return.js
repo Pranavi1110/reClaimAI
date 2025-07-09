@@ -9,6 +9,13 @@ const returnSchema = new mongoose.Schema({
   status: { type: String, default: 'pending' },
   assignedPartner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
+  repairStatus: {
+    type: String,
+    enum: ['Received', 'In Progress', 'Repaired'],
+    default: 'Received',
+  },
+  proofImage: { type: String },
+  readyForMarket: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('Return', returnSchema); 
