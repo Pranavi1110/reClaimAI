@@ -10,14 +10,14 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const client = new genAI.GoogleGenerativeAI(GEMINI_API_KEY);
 const model = client.getGenerativeModel({ model: MODEL });
 
-const retryGeminiRequest = async (imageBase64, prompt, retries = 3) => {
+const retryGeminiRequest = async (imageBase64, mimeType, prompt, retries = 3) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const result = await model.generateContent([
         {
           inlineData: {
             data: imageBase64,
-            mimeType: "image/jpeg"
+            mimeType: mimeType
           }
         },
         prompt
@@ -26,18 +26,18 @@ const retryGeminiRequest = async (imageBase64, prompt, retries = 3) => {
     } catch (err) {
       console.error(`Gemini attempt ${attempt} failed: ${err.message}`);
       if (attempt === retries) throw err;
-      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt)); // backoff
+      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
     }
   }
 };
 
 router.post('/submit', async (req, res) => {
-  const { productName, reason, description, imageBase64, purchaseDate } = req.body;
+  const { productName, reason, description, imageBase64, mimeType, purchaseDate } = req.body;
 
-  // ❌ Missing image
-  if (!imageBase64) return res.status(400).json({ message: 'No image provided' });
+  if (!imageBase64 || !mimeType) {
+    return res.status(400).json({ message: 'Image or MIME type missing' });
+  }
 
-  // ❌ Invalid or missing purchase date
   if (!purchaseDate) return res.status(400).json({ message: 'Purchase date is required' });
 
   const purchase = new Date(purchaseDate);
@@ -58,7 +58,7 @@ router.post('/submit', async (req, res) => {
   `;
 
   try {
-    const result = await retryGeminiRequest(imageBase64, prompt);
+    const result = await retryGeminiRequest(imageBase64, mimeType, prompt);
     const response = await result.response;
     const text = await response.text();
 
@@ -74,12 +74,14 @@ router.post('/submit', async (req, res) => {
         ? 'Do you want a replacement item or donate to NGO?'
         : 'Thanks! Your item will be reviewed shortly.';
 
+    const imageDataUrl = `data:${mimeType};base64,${imageBase64}`;
+
     const returnEntry = new Return({
       productName,
       reason,
       description,
       condition: predictedCondition,
-      imageUrl: 'base64', // replace with real URL if needed
+      imageUrl: imageDataUrl,
       purchaseDate,
     });
 

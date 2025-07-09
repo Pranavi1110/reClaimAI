@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import axios from "axios";
 import "./ReturnForm.css";
@@ -34,16 +33,19 @@ const ReturnForm = () => {
 
     const reader = new FileReader();
     reader.onloadend = async () => {
-      const base64Image = reader.result.split(",")[1];
+      const base64String = reader.result;
+      const base64Image = base64String.split(',')[1];
+      const mimeType = base64String.split(';')[0].split(':')[1];
 
       try {
-       const res = await axios.post("http://localhost:5000/return-api/submit", {
-  productName: formData.productName,
-  reason: formData.reason,
-  description: formData.description,
-  purchaseDate: formData.purchaseDate, // ✅ make sure it's sent
-  imageBase64: base64Image,
-});
+        const res = await axios.post("http://localhost:5000/return-api/submit", {
+          productName: formData.productName,
+          reason: formData.reason,
+          description: formData.description,
+          purchaseDate: formData.purchaseDate,
+          imageBase64: base64Image,
+          mimeType: mimeType,
+        });
 
         setAiPrediction(res.data.prediction);
         setSubmitted(true);
