@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import './PastCustomerReturns.css';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 function PastCustomerReturns() {
@@ -19,7 +21,7 @@ function PastCustomerReturns() {
       if (!userEmail) return;
 
       try {
-        const res = await axios.get(`http://localhost:5000/return-api/user-returns?email=${userEmail}`);
+        const res = await axios.get(`http://localhost:5000/api/return/user-returns?email=${userEmail}`);
         setReturns(res.data.returns);
       } catch (err) {
         console.error('Error fetching returns:', err);
@@ -30,6 +32,16 @@ function PastCustomerReturns() {
 
     fetchReturns();
   }, [userEmail]);
+  const handleCollected = async (returnId) => {
+    try {
+      await axios.post(`http://localhost:5000/api/admin/mark-collected`, { returnId });
+      // setReturns((prev) =>
+      //   prev.map((ret) => (ret._id === returnId ? { ...ret, status: 'Collected' } : ret))
+      // );
+    } catch (err) {
+      console.error('Error marking return as collected:', err);
+    }
+  };
 
   if (loading) return <div className="text-center mt-8">Loading your returns...</div>;
 
@@ -40,22 +52,35 @@ function PastCustomerReturns() {
       {returns.length === 0 ? (
         <p className="text-gray-600">No returns found.</p>
       ) : (
-        <div className="grid gap-6">
+        <div className=" gap-6">
           {returns.map((ret) => (
-            <div key={ret._id} className="border rounded-lg shadow p-4 flex gap-4 items-center">
+            <div key={ret._id} className="border aa">
+              <div class="bb">
               <img
                 src={ret.imageUrl}
                 alt={ret.productName}
-                className="w-32 h-32 object-cover rounded border"
-              />
-              <div className="flex-1">
+                class="ii"
+              /></div>
+              <div >
                 <h3 className="text-xl font-semibold">{ret.productName}</h3>
                 <p className="text-sm text-gray-700 mb-1"><strong>Reason:</strong> {ret.reason}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Condition:</strong> {ret.condition}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Status:</strong> {ret.status}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Purchase Date:</strong> {new Date(ret.purchaseDate).toDateString()}</p>
-                {ret.analysisSummary && (
+                {/* {ret.analysisSummary && (
                   <p className="text-sm text-gray-600 mt-1 italic">{ret.analysisSummary}</p>
+                )} */}
+                {ret.status === 'pending' && (
+                  <button
+                    onClick={() => handleCollected(ret._id)}
+                    className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                  >
+                    Mark as Collected
+                  </button>
+                )}
+
+                {ret.status !== 'pending' && (
+                  <p className="mt-3 text-green-700 font-medium">✔ Collected</p>
                 )}
               </div>
             </div>

@@ -9,7 +9,7 @@ const path = require('path');
 // Get all items needing repair (not yet repaired)
 router.get('/repairs', async (req, res) => {
   try {
-    const items = await Return.find({ repairStatus: { $ne: 'Repaired' } });
+    const items = await Return.find({ status: 'Repair' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch repair items' });

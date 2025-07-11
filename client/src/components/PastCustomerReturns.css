@@ -1,0 +1,16 @@
+.aa{
+    display: flex;
+    flex-wrap: wrap;
+    /* border: 1px solid rgba(0, 0, 0, 0.484); */
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin:10px 10px;
+    align-items: center;
+}
+.bb{
+    width: 300px;
+}
+.ii{
+    width: 200px;
+
+}

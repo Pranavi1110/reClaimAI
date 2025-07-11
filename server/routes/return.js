@@ -119,7 +119,7 @@ router.get('/user-returns', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const returns = await Return.find({ submittedBy: user._id }).sort({ createdAt: -1 });
+    const returns = await Return.find({ user: user._id }).sort({ createdAt: -1 });
 
     res.json({ returns });
   } catch (error) {

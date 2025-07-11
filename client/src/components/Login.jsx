@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Login'
 import axios from "axios";
 
 function Login({ setIsLoggedIn }) {
@@ -72,68 +73,57 @@ function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="w-full flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full"
-      >
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Login
-        </h2>
+    <div className="container d-flex justify-content-center align-items-center  px-3" >
+      <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow-lg mt-5 w-25" style={{ maxWidth: "500px" ,background: "transparent"}}>
+        <h2 className="text-center mb-4 fw-bold text-dark">Login</h2>
 
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            placeholder="Enter your username"
-            value={formData.username}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            required
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition duration-200"
-        >
-          Submit
-        </button>
-      </form>
+    <div className="mb-3">
+      <label htmlFor="username" className="form-label text-start ">
+        Username
+      </label>
+      <input
+        type="text"
+        className="form-control"
+        id="username"
+        name="username"
+        placeholder="Enter your username"
+        required
+      />
     </div>
+
+    <div className="mb-3">
+      <label htmlFor="email" className="form-label text-start">
+        Email
+      </label>
+      <input
+        type="email"
+        className="form-control"
+        id="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      />
+    </div>
+
+    <div className="mb-4">
+      <label htmlFor="password" className="form-label " style={{ textAlign: "start" }}>
+        Password
+      </label>
+      <input
+        type="password"
+        className="form-control"
+        id="password"
+        name="password"
+        placeholder="Enter your password"
+        required
+      />
+    </div>
+
+    <button type="submit" className="btn btn-success  fw-semibold">
+      Submit
+    </button>
+  </form>
+</div>
   );
 }
 

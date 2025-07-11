@@ -22,7 +22,12 @@ import PastCustomerReturns from "./components/PastCustomerReturns";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check localStorage for login status
+  const linkStyle = {
+    textDecoration: "none",
+    color: "#2c3e50",
+    fontWeight: "600",
+  };
+
   useEffect(() => {
     const storedStatus = localStorage.getItem("isLoggedIn");
     if (storedStatus === "true") {
@@ -33,7 +38,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
-    window.location.href = "/"; // ✅ Navigate to home
+    window.location.href = "/";
   };
 
   return (
@@ -41,6 +46,9 @@ function App() {
       <nav
         style={{
           display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+           justifyContent: "flex-end",
           gap: "1rem",
           marginBottom: "1rem",
           padding: "1rem",
@@ -48,110 +56,38 @@ function App() {
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
         }}
       >
-        <Link
-          to="/"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Home
-        </Link>
-        <Link
-          to="/return"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Return
-        </Link>
-        <Link
-          to="/partner"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Partner
-        </Link>
-        <Link
-          to="/admin"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Admin
-        </Link>
-        <Link
-          to="/marketplace"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Marketplace
-        </Link>
-        <Link
-          to="/repair"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Repair
-        </Link>
-        <Link
-          to="/ngo"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          NGO
-        </Link>
+        <Link to="/" style={linkStyle}>Home</Link>
 
         {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#e74c3c",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}
-          >
-            Logout
-          </button>
+          <>
+            <Link to="/return" style={linkStyle}>Return</Link>
+            <Link to="/past" style={linkStyle}>Past Return</Link>
+            <Link to="/partner" style={linkStyle}>Partner</Link>
+            <Link to="/admin" style={linkStyle}>Admin</Link>
+            <Link to="/marketplace" style={linkStyle}>Marketplace</Link>
+            <Link to="/repair" style={linkStyle}>Repair</Link>
+            <Link to="/ngo" style={linkStyle}>NGO</Link>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#e74c3c",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
+          </>
         ) : (
-          <Link
-            to="/login"
-            style={{
-              textDecoration: "none",
-              color: "#2c3e50",
-              fontWeight: "600",
-            }}
-          >
-            Login
-          </Link>
+          <Link to="/login" style={linkStyle}>Login</Link>
         )}
       </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} />}
-        />
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/return" element={<ReturnForm />} />
         <Route path="/partner" element={<PartnerDashboard />} />
         <Route path="/customer" element={<CustomerDashboard />} />
@@ -164,5 +100,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;
