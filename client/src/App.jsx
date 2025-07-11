@@ -5,6 +5,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import Marketplace from "./components/Marketplace";
 import Home from "./components/Home";
 import RepairDashboard from "./components/RepairDashboard";
+import NGODashboard from "./components/NGODashboard";
 import "./App.css";
 
 function App() {
@@ -80,6 +81,16 @@ function App() {
         >
           Repair
         </Link>
+        <Link
+          to="/ngo"
+          style={{
+            textDecoration: "none",
+            color: "#2c3e50",
+            fontWeight: "600",
+          }}
+        >
+          NGO
+        </Link>
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -88,6 +99,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/repair" element={<RepairDashboard />} />
+        <Route path="/ngo" element={<NGODashboard />} />
       </Routes>
     </Router>
   );
