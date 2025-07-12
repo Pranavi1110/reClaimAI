@@ -300,7 +300,10 @@ const NGODashboard = () => {
                     </div>
                     {entry.proofImage && (
                       <div className="donation-proof-img">
-                        <img src={"/uploads/" + entry.proofImage} alt="Proof" />
+                        <img
+                          src={`http://localhost:5000/uploads/${entry.proofImage}`}
+                          alt="Proof"
+                        />
                       </div>
                     )}
                   </li>
