@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Login";
 import axios from "axios";
 
 function Login({ setIsLoggedIn }) {
@@ -20,6 +21,7 @@ function Login({ setIsLoggedIn }) {
   const getRoleFromEmail = (email) => {
     if (email === "rasagnakudikyala@gmail.com") return "admin";
     if (email.endsWith("@partner.in")) return "partner";
+    if (email.endsWith("@ngo.in")) return "ngo";
     return "user";
   };
 
@@ -33,7 +35,7 @@ function Login({ setIsLoggedIn }) {
       password: formData.password,
       role,
     };
-
+    console.log("Form Data:", fullData);
     try {
       const checkResponse = await axios.get(
         `http://localhost:5000/user-api/check-email?email=${formData.email}`
@@ -44,18 +46,27 @@ function Login({ setIsLoggedIn }) {
         const userRes = await axios.get(
           `http://localhost:5000/user-api/check-email?email=${formData.email}`
         );
-        localStorage.setItem("user", JSON.stringify({ email: formData.email }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ email: formData.email, role })
+        );
       } else {
         const registerRes = await axios.post(
           "http://localhost:5000/user-api/register",
           fullData
         );
-        localStorage.setItem("user", JSON.stringify({ email: formData.email }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ email: formData.email, role })
+        );
       }
 
       // Set login state
       localStorage.setItem("isLoggedIn", "true");
       setIsLoggedIn(true);
+
+      // Print login details
+      console.log("Logged in:", { email: formData.email, role });
 
       // Navigate based on role
       if (role === "admin") {
@@ -63,7 +74,7 @@ function Login({ setIsLoggedIn }) {
       } else if (role === "partner") {
         navigate("/partner");
       } else {
-        navigate("/customer");
+        navigate("/customer"); // Redirect to home page for regular users
       }
     } catch (err) {
       console.error("Error during login/register:", err);
@@ -72,17 +83,16 @@ function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="w-full flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div className="container d-flex justify-content-center align-items-center  px-3">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full"
+        className="bg-white p-4 rounded shadow-lg mt-5 w-25"
+        style={{ maxWidth: "500px", background: "transparent" }}
       >
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Login
-        </h2>
+        <h2 className="text-center mb-4 fw-bold text-dark">Login</h2>
 
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
+        <div className="mb-3">
+          <label htmlFor="username" className="form-label text-start ">
             Username
           </label>
           <input
@@ -91,13 +101,13 @@ function Login({ setIsLoggedIn }) {
             placeholder="Enter your username"
             value={formData.username}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="form-control"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label text-start">
             Email
           </label>
           <input
@@ -106,13 +116,18 @@ function Login({ setIsLoggedIn }) {
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="
+            form-control"
             required
           />
         </div>
 
-        <div className="mb-6">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="form-label "
+            style={{ textAlign: "start" }}
+          >
             Password
           </label>
           <input
@@ -121,15 +136,12 @@ function Login({ setIsLoggedIn }) {
             placeholder="Enter your password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="form-control"
             required
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition duration-200"
-        >
+        <button type="submit" className="btn btn-success  fw-semibold">
           Submit
         </button>
       </form>

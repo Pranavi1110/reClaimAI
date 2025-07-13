@@ -70,18 +70,7 @@ function PastCustomerReturns() {
                 {/* {ret.analysisSummary && (
                   <p className="text-sm text-gray-600 mt-1 italic">{ret.analysisSummary}</p>
                 )} */}
-                {ret.status === 'pending' && (
-                  <button
-                    onClick={() => handleCollected(ret._id)}
-                    className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                  >
-                    Mark as Collected
-                  </button>
-                )}
-
-                {ret.status !== 'pending' && (
-                  <p className="mt-3 text-green-700 font-medium">✔ Collected</p>
-                )}
+                
               </div>
             </div>
           ))}

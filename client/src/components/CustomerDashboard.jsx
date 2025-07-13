@@ -53,17 +53,17 @@ function CustomerDashboard() {
         you return through EcoReturns helps reduce waste, supports local communities, and promotes a greener lifestyle.
       </p>
 
-      <div className="flex justify-center space-x-6">
+      <div className="flex  space-x-6 text-dark text-center justify-between">
         <button
           onClick={handleReturnClick}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow"
+          className="bg-green-600 hover:bg-green-700  font-semibold py-2 px-6 rounded-lg shadow text-dark"
         >
           Return an Item
         </button>
 
         <button
           onClick={handleViewReturnsClick}
-          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg shadow"
+          className="bg-gray-600 hover:bg-gray-700  font-semibold py-2 px-6 rounded-lg shadow text-dark"
         >
           View Past Returns
         </button>

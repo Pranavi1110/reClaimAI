@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./ReturnForm.css";
 
@@ -15,6 +15,10 @@ const ReturnForm = () => {
   const [aiPrediction, setAiPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [donationStep, setDonationStep] = useState(false);
+  const [ngos, setNgos] = useState([]);
+  const [selectedNGO, setSelectedNGO] = useState("");
+  const [base64Payload, setBase64Payload] = useState(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -33,7 +37,6 @@ const ReturnForm = () => {
 
     const storedUser = localStorage.getItem("user");
     const userEmail = storedUser ? JSON.parse(storedUser).email : null;
-    console.log(userEmail);
     if (!userEmail) {
       alert("User not found. Please log in again.");
       setLoading(false);
@@ -47,32 +50,66 @@ const ReturnForm = () => {
       const mimeType = base64String.split(";")[0].split(":")[1];
 
       try {
-        const res = await axios.post(
-          "http://localhost:5000/api/return/submit",
-          {
-            productName: formData.productName,
-            reason: formData.reason,
-            description: formData.description,
-            purchaseDate: formData.purchaseDate,
-            imageBase64: base64Image,
-            mimeType: mimeType,
-            email: userEmail, // ✅ send user email
-          }
-        );
+        const res = await axios.post("http://localhost:5000/api/return/submit", {
+          productName: formData.productName,
+          reason: formData.reason,
+          description: formData.description,
+          purchaseDate: formData.purchaseDate,
+          imageBase64: base64Image,
+          mimeType: mimeType,
+          email: userEmail,
+        });
 
-        console.log("🧠 AI Response", res.data);
         setAiPrediction(res.data.prediction);
-        setSubmitted(true);
+        setBase64Payload({
+          imageBase64: base64Image,
+          mimeType,
+          email: userEmail,
+        });
+
+        if (res.data.prediction.condition === "good condition") {
+          fetchNGOs();
+        } else {
+          setSubmitted(true);
+        }
       } catch (err) {
-        console.error("❌ Error submitting:", err);
         alert(err.response?.data?.message || "Error submitting return");
       } finally {
         setLoading(false);
       }
     };
 
-    if (formData.image) {
-      reader.readAsDataURL(formData.image);
+    if (formData.image) reader.readAsDataURL(formData.image);
+  };
+
+  const fetchNGOs = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/return/partners/ngos");
+      setNgos(res.data.ngos);
+      setDonationStep(true);
+    } catch (err) {
+      alert("Failed to fetch NGOs");
+    }
+  };
+
+  const finalizeReturn = async (donate) => {
+    if (!base64Payload) return;
+    setLoading(true);
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/return/submit", {
+        ...formData,
+        ...base64Payload,
+        donationOpted: donate,
+        ngoId: donate ? selectedNGO : null,
+      });
+
+      setSubmitted(true);
+      setDonationStep(false);
+    } catch (err) {
+      alert("Failed to finalize return");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,7 +117,7 @@ const ReturnForm = () => {
     <div className="return-form-container">
       <h2>Initiate Product Return</h2>
 
-      {!submitted && (
+      {!submitted && !donationStep && (
         <form onSubmit={handleSubmit} className="return-form">
           <div className="form-group">
             <label>Product Name</label>
@@ -157,45 +194,41 @@ const ReturnForm = () => {
         </form>
       )}
 
+      {donationStep && (
+        <div className="donation-select">
+          <h3>The item is in good condition. Do you want to donate it?</h3>
+          <select
+            value={selectedNGO}
+            onChange={(e) => setSelectedNGO(e.target.value)}
+          >
+            <option value="">-- Select an NGO --</option>
+            {ngos.map((ngo) => (
+              <option key={ngo._id} value={ngo._id}>
+                {ngo.partnerDetails.ngoInfo.organizationName}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={() => finalizeReturn(true)}
+            disabled={!selectedNGO}
+          >
+            Confirm Donation
+          </button>
+          <button onClick={() => finalizeReturn(false)}>No, Restock Instead</button>
+        </div>
+      )}
+
       {aiPrediction && (
         <div className="ai-prediction">
           <h3>AI Sustainability & Condition Report</h3>
           <div className="prediction-card">
-            <div
-              style={{
-                whiteSpace: "pre-wrap",
-                marginTop: "5px",
-                color: "black",
-              }}
-            >
-              <strong
-                style={{
-                  whiteSpace: "pre-wrap",
-                  marginTop: "5px",
-                  color: "black",
-                }}
-              >
-                Condition:
-              </strong>{" "}
-              {aiPrediction.condition}
+            <div style={{ whiteSpace: "pre-wrap", marginTop: "5px", color: "black" }}>
+              <strong>Condition:</strong> {aiPrediction.condition}
             </div>
             <div style={{ marginTop: "10px" }}>
-              <strong
-                style={{
-                  whiteSpace: "pre-wrap",
-                  marginTop: "5px",
-                  color: "black",
-                }}
-              >
-                AI Insight:
-              </strong>
-              <p
-                style={{
-                  whiteSpace: "pre-wrap",
-                  marginTop: "5px",
-                  color: "black",
-                }}
-              >
+              <strong>AI Insight:</strong>
+              <p style={{ whiteSpace: "pre-wrap", marginTop: "5px", color: "black" }}>
                 {aiPrediction.summary || "No insight provided by AI."}
               </p>
             </div>
