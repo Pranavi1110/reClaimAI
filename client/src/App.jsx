@@ -58,66 +58,7 @@ function App() {
         >
           Home
         </Link>
-        <Link
-          to="/return"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Return
-        </Link>
-        <Link
-          to="/partner"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Partner
-        </Link>
-        <Link
-          to="/admin"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Admin
-        </Link>
-        <Link
-          to="/marketplace"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Marketplace
-        </Link>
-        <Link
-          to="/repair"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          Repair
-        </Link>
-        <Link
-          to="/ngo"
-          style={{
-            textDecoration: "none",
-            color: "#2c3e50",
-            fontWeight: "600",
-          }}
-        >
-          NGO
-        </Link>
+        
 
         {isLoggedIn ? (
           <button
