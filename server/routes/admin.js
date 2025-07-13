@@ -31,28 +31,17 @@ router.post('/mark-collected', async (req, res) => {
     console.log('Found return entry:', returnEntry);
     if (!returnEntry) return res.status(404).json({ message: 'Return not found' });
 
-    // Decide if it should go to Marketplace
-    const isEligible = shouldGoToMarketplace(returnEntry.condition, returnEntry.reason);
-
-    if (!isEligible) {
+    // Route based on condition
+    const conditionLower = (returnEntry.condition || '').toLowerCase();
+    if (conditionLower.includes('good')) {
+      returnEntry.status = 'NGO'; // New status for NGO dashboard
+      await returnEntry.save();
+      return res.status(200).json({ message: 'Item sent to NGO dashboard.' });
+    } else {
       returnEntry.status = 'Repair';
       await returnEntry.save();
-      return res.status(200).json({ message: 'Item not eligible for Marketplace. Status set to Returned only.' });
+      return res.status(200).json({ message: 'Item sent to Repairs dashboard.' });
     }
-    // If eligible, add to Marketplace
-    // Add to Marketplace
-    await MarketplaceItem.create({
-      name: returnEntry.productName,
-      imageUrl: returnEntry.imageUrl,
-      description: returnEntry.description,
-    });
-
-    // Update return status
-    returnEntry.status = 'Returned';
-    await returnEntry.save();
-
-    res.status(200).json({ message: 'Item added to Marketplace and marked as Returned.' });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

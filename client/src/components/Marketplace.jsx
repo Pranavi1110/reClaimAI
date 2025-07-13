@@ -8,6 +8,7 @@ const Marketplace = () => {
   const [sortBy, setSortBy] = useState("price");
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [userGreenPoints, setUserGreenPoints] = useState(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -18,15 +19,18 @@ const Marketplace = () => {
           id: item._id,
           name: item.productName || item.name || "Unnamed Product",
           description: item.description || item.reason || "No description",
-          price: item.price || 0,
-          originalPrice: item.originalPrice || 0,
+          price: Math.floor(Math.random() * 50) + 10, // Random price between 10-60
+          originalPrice: Math.floor(Math.random() * 100) + 50, // Random original price between 50-150
           image: item.imageUrl,
           category: item.category || "Other",
           condition:
-            item.condition ||
-            (item.repairStatus === "Repaired" ? "repaired" : "refurbished"),
+            item.repairStatus === "Repaired"
+              ? "Good Condition"
+              : item.condition === "unknown"
+              ? "Good Condition"
+              : item.condition || "Good Condition",
           available: true,
-          greenPoints: item.greenPoints || 0,
+          greenPoints: Math.floor(Math.random() * 20) + 5, // Random green points between 5-25
         }));
         setItems(mapped);
       } catch (err) {
@@ -66,17 +70,53 @@ const Marketplace = () => {
     });
 
   const handleClaim = (item) => {
+    console.log("Claim button clicked for item:", item);
     setSelectedItem(item);
     setShowClaimModal(true);
+    console.log("Modal should be visible now, showClaimModal:", true);
   };
 
-  const confirmClaim = () => {
+  // Debug modal state
+  console.log(
+    "Current modal state - showClaimModal:",
+    showClaimModal,
+    "selectedItem:",
+    selectedItem
+  );
+
+  const confirmClaim = async () => {
     if (selectedItem) {
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, available: false } : item
-        )
-      );
+      const storedUser = localStorage.getItem("user");
+      console.log("Stored user:", storedUser);
+      const userId = storedUser ? JSON.parse(storedUser)._id : null;
+      console.log("User ID:", userId);
+      if (!userId) {
+        alert("User not found. Please log in again.");
+        setShowClaimModal(false);
+        setSelectedItem(null);
+        return;
+      }
+      try {
+        console.log("Claiming item:", selectedItem.id);
+        const res = await axios.post(
+          `http://localhost:5000/api/marketplace/claim/${selectedItem.id}`,
+          { userId }
+        );
+        console.log("Claim response:", res.data);
+
+        // Remove item from the list immediately
+        setItems((prev) => prev.filter((item) => item.id !== selectedItem.id));
+        setUserGreenPoints(res.data.greenPoints);
+
+        // Show success alert with actual green points earned
+        const pointsEarned = res.data.pointsEarned || selectedItem.greenPoints;
+        alert(
+          `Claimed successfully! You've earned ${pointsEarned} green points.`
+        );
+      } catch (err) {
+        console.error("Claim error:", err);
+        alert(err.response?.data?.error || err.message);
+      }
       setShowClaimModal(false);
       setSelectedItem(null);
     }
@@ -88,6 +128,8 @@ const Marketplace = () => {
         return "#3498db";
       case "repaired":
         return "#27ae60";
+      case "Good Condition":
+        return "#2ecc71";
       case "upcycled":
         return "#f39c12";
       case "good":
@@ -156,7 +198,6 @@ const Marketplace = () => {
             </div>
             <div className="item-details">
               <h3>{item.name}</h3>
-              <p>{item.description}</p>
               <p>Price: ${item.price}</p>
               <p>Green Points: {item.greenPoints}</p>
               {item.available && (
@@ -171,12 +212,17 @@ const Marketplace = () => {
 
       {showClaimModal && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="claim-modal">
             <h2>Confirm Claim</h2>
             <p>Are you sure you want to claim this item?</p>
             <button onClick={confirmClaim}>Yes, Claim</button>
             <button onClick={() => setShowClaimModal(false)}>Cancel</button>
           </div>
+        </div>
+      )}
+      {userGreenPoints !== null && (
+        <div className="green-points-banner">
+          You have been awarded {userGreenPoints} Green Points!
         </div>
       )}
     </div>

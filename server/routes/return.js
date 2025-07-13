@@ -129,4 +129,17 @@ router.get('/user-returns', async (req, res) => {
   }
 });
 
+/**
+ * Get All Pending Returns (for Admin)
+ */
+router.get('/pending', async (req, res) => {
+  try {
+    const returns = await Return.find({ status: 'pending' }).sort({ createdAt: -1 });
+    res.json({ returns });
+  } catch (error) {
+    console.error('Error fetching pending returns:', error);
+    res.status(500).json({ message: 'Error fetching pending returns' });
+  }
+});
+
 module.exports = router;

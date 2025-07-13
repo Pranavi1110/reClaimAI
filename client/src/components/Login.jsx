@@ -48,7 +48,11 @@ function Login({ setIsLoggedIn }) {
         );
         localStorage.setItem(
           "user",
-          JSON.stringify({ email: formData.email, role })
+          JSON.stringify({
+            email: formData.email,
+            role,
+            _id: userRes.data.user._id,
+          })
         );
       } else {
         const registerRes = await axios.post(
@@ -57,7 +61,11 @@ function Login({ setIsLoggedIn }) {
         );
         localStorage.setItem(
           "user",
-          JSON.stringify({ email: formData.email, role })
+          JSON.stringify({
+            email: formData.email,
+            role,
+            _id: registerRes.data.user._id,
+          })
         );
       }
 

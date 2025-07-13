@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -10,6 +11,39 @@ const AdminDashboard = () => {
     activeReturns: 89,
     completedReturns: 1161,
   });
+
+  const [pendingReturns, setPendingReturns] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPendingReturns();
+  }, []);
+
+  const fetchPendingReturns = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/return/pending");
+      setPendingReturns(res.data.returns || []);
+    } catch (err) {
+      console.error("Error fetching pending returns:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkCollected = async (returnId) => {
+    try {
+      await axios.post("http://localhost:5000/api/admin/mark-collected", {
+        returnId,
+      });
+      // Remove from pending list
+      setPendingReturns((prev) => prev.filter((ret) => ret._id !== returnId));
+    } catch (err) {
+      alert(
+        "Error marking as collected: " + err.response?.data?.message ||
+          err.message
+      );
+    }
+  };
 
   const [categoryData] = useState([
     { category: "Electronics", count: 450, percentage: 36 },
@@ -89,6 +123,51 @@ const AdminDashboard = () => {
           <button className="export-btn">Export Report</button>
           <button className="settings-btn">Settings</button>
         </div>
+      </div>
+
+      {/* Pending Returns Section */}
+      <div className="pending-returns-section">
+        <h2>Pending Returns ({pendingReturns.length})</h2>
+        {loading ? (
+          <div>Loading pending returns...</div>
+        ) : pendingReturns.length === 0 ? (
+          <div>No pending returns.</div>
+        ) : (
+          <div className="returns-grid">
+            {pendingReturns.map((ret) => (
+              <div key={ret._id} className="return-card">
+                <div className="return-image">
+                  <img src={ret.imageUrl} alt={ret.productName} />
+                </div>
+                <div className="return-details">
+                  <h3>{ret.productName}</h3>
+                  <p>
+                    <strong>Reason:</strong> {ret.reason}
+                  </p>
+                  <p>
+                    <strong>Condition:</strong> {ret.condition}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {ret.status}
+                  </p>
+                  <p>
+                    <strong>User:</strong> {ret.userEmail}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(ret.createdAt).toLocaleDateString()}
+                  </p>
+                  <button
+                    onClick={() => handleMarkCollected(ret._id)}
+                    className="mark-collected-btn"
+                  >
+                    Mark as Collected
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="metrics-grid">

@@ -35,7 +35,11 @@ router.get('/check-email', async (req, res) => {
   const { email } = req.query;
   try {
     const user = await User.findOne({ email });
-    res.json({ exists: !!user });
+    if (user) {
+      res.json({ exists: true, user: user });
+    } else {
+      res.json({ exists: false });
+    }
   } catch (err) {
     res.status(500).json({ error: 'Failed to check email', details: err.message });
   }

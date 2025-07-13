@@ -63,28 +63,17 @@ const RepairDashboard = () => {
   };
 
   // Add to marketplace (set readyForMarket=true and repairStatus=Repaired)
-  const addToMarketplace = async (item) => {
+  const sendToMarketplace = async (item) => {
     try {
-      const res = await axios.patch(
-        `http://localhost:5000/api/partner/repairs/${item._id}/status`,
-        { repairStatus: "Repaired", readyForMarket: true }
+      await axios.patch(
+        `http://localhost:5000/api/partner/repairs/${item._id}/mark-repaired`
       );
-      // Remove from repairItems list
       setRepairItems((prev) => prev.filter((i) => i._id !== item._id));
-      setUiState((prev) => ({
-        ...prev,
-        [item._id]: {
-          ...prev[item._id],
-          justAdded: true,
-        },
-      }));
-      setTimeout(() => {
-        setUiState((prev) => {
-          const newState = { ...prev };
-          delete newState[item._id];
-          return newState;
-        });
-      }, 2000);
+      setUiState((prev) => {
+        const newState = { ...prev };
+        delete newState[item._id];
+        return newState;
+      });
     } catch (err) {
       alert(err.response?.data?.error || err.message);
     }
@@ -192,41 +181,26 @@ const RepairDashboard = () => {
                         ))}
                       </select>
                     </div>
-                    {/* If user selects 'Repaired', show Add to Marketplace button */}
-                    {state.selectedStatus === "Repaired" &&
-                      item.repairStatus !== "Repaired" && (
-                        <div
-                          className="proof-section"
-                          style={{ marginTop: 16 }}
+                    {/* If user selects 'Repaired', show Send to Marketplace button */}
+                    {state.selectedStatus === "Repaired" && (
+                      <div className="proof-section" style={{ marginTop: 16 }}>
+                        <button
+                          onClick={() => sendToMarketplace(item)}
+                          style={{
+                            background: "#27ae60",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 6,
+                            padding: "8px 18px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            fontSize: 16,
+                          }}
                         >
-                          <button
-                            onClick={() => addToMarketplace(item)}
-                            style={{
-                              background: "#27ae60",
-                              color: "#fff",
-                              border: "none",
-                              borderRadius: 6,
-                              padding: "8px 18px",
-                              fontWeight: 600,
-                              cursor: "pointer",
-                              fontSize: 16,
-                            }}
-                          >
-                            Add to Marketplace
-                          </button>
-                          {state.justAdded && (
-                            <div
-                              style={{
-                                color: "#27ae60",
-                                marginTop: 8,
-                                fontWeight: 500,
-                              }}
-                            >
-                              Item added to marketplace!
-                            </div>
-                          )}
-                        </div>
-                      )}
+                          Send to Marketplace
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

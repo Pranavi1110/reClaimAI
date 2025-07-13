@@ -24,7 +24,7 @@ const upload = multer({ storage });
 
 // GET /api/ngo/returns - Items in good condition
 router.get("/returns", async (req, res) => {
-  const items = await Return.find({ condition: "good condition" });
+  const items = await Return.find({ status: "NGO" });
   res.json({ items });
 });
 

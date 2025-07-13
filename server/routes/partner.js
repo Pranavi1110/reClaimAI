@@ -90,4 +90,30 @@ router.post('/repairs/:id/verify-repair', upload.single('proofImage'), async (re
   }
 });
 
+// PATCH /repairs/:id/mark-repaired - Mark as repaired and send to marketplace
+router.patch('/repairs/:id/mark-repaired', async (req, res) => {
+  try {
+    console.log('Marking item as repaired and sending to marketplace:', req.params.id);
+    const item = await Return.findByIdAndUpdate(
+      req.params.id,
+      {
+        repairStatus: 'Repaired',
+        status: 'Marketplace',
+        readyForMarket: true
+      },
+      { new: true }
+    );
+    console.log('Updated item:', {
+      id: item._id,
+      name: item.productName,
+      status: item.status,
+      readyForMarket: item.readyForMarket
+    });
+    res.json(item);
+  } catch (err) {
+    console.error('Error marking as repaired:', err);
+    res.status(500).json({ error: 'Failed to mark as repaired and send to marketplace' });
+  }
+});
+
 module.exports = router; 
