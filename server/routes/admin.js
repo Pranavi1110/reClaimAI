@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Return = require('../models/Return');
 const MarketplaceItem = require('../models/MarketplaceItem'); 
+const User = require('../models/User');
+
 
 function shouldGoToMarketplace(condition, reason) {
   const reasonLower = reason.toLowerCase();
@@ -22,6 +24,7 @@ function shouldGoToMarketplace(condition, reason) {
 
 router.post('/mark-collected', async (req, res) => {
   const { returnId } = req.body;
+ 
   console.log('Marking collected for return ID:', returnId);
 
   if (!returnId) return res.status(400).json({ message: 'Return ID is required' });
@@ -36,9 +39,16 @@ router.post('/mark-collected', async (req, res) => {
     if (conditionLower.includes('good')) {
       returnEntry.status = 'NGO'; // New status for NGO dashboard
       await returnEntry.save();
-      return res.status(200).json({ message: 'Item sent to NGO dashboard.' });
+      return res.status(200).json({  message: "Item sent to NGO dashboard." });
     } else {
+      const partners = await User.find({ role: "partner" });
+          if (!partners.length) {
+             return res.status(500).json({ message: "No partner available to assign." });
+     }
+        const randomPartner = partners[Math.floor(Math.random() * partners.length)];
       returnEntry.status = 'Repair';
+      returnEntry.repairStatus = 'Received';
+      returnEntry.assignedPartner = randomPartner.email;
       await returnEntry.save();
       return res.status(200).json({ message: 'Item sent to Repairs dashboard.' });
     }

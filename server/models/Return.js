@@ -12,7 +12,7 @@ const returnSchema = new mongoose.Schema({
   readyForMarket: { type: Boolean, default: false },
   repairStatus: { type: String, default: "Received" },
 
-  assignedPartner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  assignedPartner: String,
   submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   userEmail: { type: String, required: true },
   claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
