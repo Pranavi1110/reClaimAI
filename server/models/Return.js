@@ -13,8 +13,8 @@ const returnSchema = new mongoose.Schema({
   repairStatus: { type: String, default: "Received" },
 
   assignedPartner: String,
-  submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  userEmail: { type: String, required: true },
+  submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User"},
+  userEmail: { type: String },
   claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
   donationOpted: { type: Boolean, default: false },
