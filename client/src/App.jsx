@@ -99,28 +99,32 @@ function App() {
                   Marketplace
                 </Link>
               </>
-            ) : (
+            ) : role === "partner" ? (
               <>
-                <Link to="/return" style={linkStyle}>
+                {/* <Link to="/return" style={linkStyle}>
                   Return
                 </Link>
                 <Link to="/past" style={linkStyle}>
                   Past Return
-                </Link>
+                </Link> */}
                 <Link to="/partner" style={linkStyle}>
                   Partner
                 </Link>
-                <Link to="/admin" style={linkStyle}>
-                  Admin
-                </Link>
-                <Link to="/marketplace" style={linkStyle}>
-                  Marketplace
-                </Link>
-                <Link to="/repair" style={linkStyle}>
-                  Repair
-                </Link>
+{/*                
                 <Link to="/ngo" style={linkStyle}>
                   NGO
+                </Link> */}
+              </>
+            ):(
+              <>
+               <Link to="/admin" style={linkStyle}>
+                  Admin
+                </Link>
+                {/* <Link to="/marketplace" style={linkStyle}>
+                  Marketplace
+                </Link> */}
+                <Link to="/repair" style={linkStyle}>
+                  Repair
                 </Link>
               </>
             )}
@@ -146,10 +150,10 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} />}
-        />
+       <Route
+  path="/login"
+  element={<Login setIsLoggedIn={setIsLoggedIn} setRole={setRole} />}
+/>
         <Route path="/return" element={<ReturnForm />} />
         <Route path="/partner" element={<PartnerDashboard />} />
         <Route path="/customer" element={<CustomerDashboard />} />

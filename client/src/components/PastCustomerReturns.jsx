@@ -22,7 +22,8 @@ function PastCustomerReturns() {
 
       try {
         const res = await axios.get(`http://localhost:5000/api/return/user-returns?email=${userEmail}`);
-        setReturns(res.data.returns);
+        const sortedReturns = res.data.returns.sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate));
+        setReturns(sortedReturns);
       } catch (err) {
         console.error('Error fetching returns:', err);
       } finally {
@@ -32,16 +33,16 @@ function PastCustomerReturns() {
 
     fetchReturns();
   }, [userEmail]);
-  const handleCollected = async (returnId) => {
-    try {
-      await axios.post(`http://localhost:5000/api/admin/mark-collected`, { returnId });
-      // setReturns((prev) =>
-      //   prev.map((ret) => (ret._id === returnId ? { ...ret, status: 'Collected' } : ret))
-      // );
-    } catch (err) {
-      console.error('Error marking return as collected:', err);
-    }
-  };
+  // const handleCollected = async (returnId) => {
+  //   try {
+  //     await axios.post(`http://localhost:5000/api/admin/mark-collected`, { returnId });
+  //     // setReturns((prev) =>
+  //     //   prev.map((ret) => (ret._id === returnId ? { ...ret, status: 'Collected' } : ret))
+  //     // );
+  //   } catch (err) {
+  //     console.error('Error marking return as collected:', err);
+  //   }
+  // };
 
   if (loading) return <div className="text-center mt-8">Loading your returns...</div>;
 

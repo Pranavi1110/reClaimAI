@@ -248,7 +248,7 @@
 }
 .green-credit-counter {
   position: fixed;
-  top: 2rem;
+  top: 7rem;
   right: 2rem;
   background: linear-gradient(90deg, #a5d6a7 60%, #43a047 100%);
   color: #1b5e20;

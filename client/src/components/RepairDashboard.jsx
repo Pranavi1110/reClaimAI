@@ -159,6 +159,13 @@ const RepairDashboard = () => {
                       Assigned:{" "}
                       {item.assignedDate || item.createdAt?.slice(0, 10)}
                     </p>
+                      <p
+                      className="assigned-date"
+                      style={{ margin: 0, color: "#888" }}
+                    >
+                      Assigned to:{" "}
+                      {item.assignedPartner}
+                    </p>
                     <div className="status-actions" style={{ marginTop: 12 }}>
                       <select
                         value={state.selectedStatus || item.repairStatus}

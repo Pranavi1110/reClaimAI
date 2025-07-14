@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Login";
 import axios from "axios";
 
-function Login({ setIsLoggedIn }) {
+function Login({ setIsLoggedIn ,setRole}) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -50,10 +50,14 @@ function Login({ setIsLoggedIn }) {
           "user",
           JSON.stringify({
             email: formData.email,
-            role,
+            role: userRes.data.user.role,
             _id: userRes.data.user._id,
           })
         );
+        console.log("User already exists, logging in:", userRes.data.user);
+        setRole(userRes.data.user.role);
+      // Print login details
+      console.log("Logged in:", { email: formData.email, role: userRes.data.user.role });
       } else {
         const registerRes = await axios.post(
           "http://localhost:5000/user-api/register",
@@ -67,14 +71,15 @@ function Login({ setIsLoggedIn }) {
             _id: registerRes.data.user._id,
           })
         );
+        setRole(role);  
+      // Print login details
+        console.log("Logged in:", { email: formData.email, role });
       }
 
       // Set login state
       localStorage.setItem("isLoggedIn", "true");
       setIsLoggedIn(true);
-
-      // Print login details
-      console.log("Logged in:", { email: formData.email, role });
+    
 
       // Navigate based on role
       if (role === "admin") {
